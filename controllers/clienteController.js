@@ -3,37 +3,46 @@ const Cliente = require('../models/cliente');
 // Obtener todos los clientes
 const getClientes = async (req, res) => {
     try {
-        const { page = 1, limit = 10, nombre, sucursal, odometro, patente, vin, totalVenta, modelo, marca, ordenar } = req.query;
+        const { page = 1, limit = 12, nombre, sucursal, odometroMin, odometroMax, patente, vin, totalVenta, modelo, marca, ordenar, sortBy } = req.query;
         const options = {
             page: parseInt(page),
             limit: parseInt(limit),
-            sort: { TotalVenta: ordenar === 'desc' ? -1 : 1 } // Ordenar por TotalVenta
+            sort: {}
         };
-        
+
+        // Configurar la ordenación
+        if (sortBy && ordenar) {
+            options.sort[sortBy] = ordenar === 'desc' ? -1 : 1;
+        } else {
+            options.sort['OdometroValor'] = -1; // Default: ordenar por Odómetro de mayor a menor
+        }
+
         const filter = {};
         if (nombre) {
-            filter.Nombre = { $regex: nombre, $options: 'i' }; // Filtrar por nombre (case insensitive)
+            filter.Nombre = { $regex: nombre, $options: 'i' };
         }
         if (sucursal) {
-            filter.Sucursal = { $regex: sucursal, $options: 'i' }; // Filtrar por sucursal (case insensitive)
+            filter.Sucursal = { $regex: sucursal, $options: 'i' };
         }
-        if (odometro) {
-            filter.OdometroValor = { $gte: parseInt(odometro) }; // Filtrar por odómetro mayor o igual
+        if (odometroMin || odometroMax) {
+            filter.OdometroValor = {};
+            if (odometroMin) filter.OdometroValor.$gte = parseInt(odometroMin);
+            if (odometroMax) filter.OdometroValor.$lte = parseInt(odometroMax);
         }
         if (patente) {
-            filter.Patente = { $regex: patente, $options: 'i' }; // Filtrar por patente (case insensitive)
+            filter.Patente = { $regex: patente, $options: 'i' };
         }
         if (vin) {
-            filter.VIN = { $regex: vin, $options: 'i' }; // Filtrar por VIN (case insensitive)
+            filter.VIN = { $regex: vin, $options: 'i' };
         }
         if (totalVenta) {
-            filter.TotalVenta = { $gte: parseInt(totalVenta) }; // Filtrar por total de ventas mayor o igual
+            filter.TotalVenta = { $gte: parseInt(totalVenta) };
         }
         if (modelo) {
-            filter.Modelo = { $regex: modelo, $options: 'i' }; // Filtrar por modelo (case insensitive)
+            filter.Modelo = { $regex: modelo, $options: 'i' };
         }
         if (marca) {
-            filter.Marca = { $regex: marca, $options: 'i' }; // Filtrar por marca (case insensitive)
+            filter.Marca = { $regex: marca, $options: 'i' };
         }
 
         const result = await Cliente.paginate(filter, options);
