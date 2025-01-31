@@ -1,4 +1,5 @@
 const Cliente = require("../models/cliente");
+const io = require("../server"); // Importar io desde server.js
 
 // Obtener todos los clientes
 const getClientes = async (req, res) => {
@@ -98,6 +99,9 @@ const updateConsultadoStatus = async (req, res) => {
       return res.status(404).json({ message: "Cliente no encontrado" });
     }
 
+    // Emitir un evento a todos los clientes
+    io.emit("cliente_actualizado", cliente);
+
     res.json(cliente);
   } catch (error) {
     console.error("Error al actualizar el estado de consultado:", error);
@@ -115,3 +119,4 @@ module.exports = {
   getClienteById,
   updateConsultadoStatus,
 };
+
