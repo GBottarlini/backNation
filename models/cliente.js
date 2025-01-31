@@ -23,7 +23,8 @@ const clienteSchema = new mongoose.Schema({
     OdometroValor: Number,
     IncidentesCliente: String,
     IncidentesRecepcionista: String,
-    ResultadoTecnico: String
+    ResultadoTecnico: String,
+    consultado: { type: Boolean, default: false }
 });
 
 // Usar el plugin de paginación
