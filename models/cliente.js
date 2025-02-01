@@ -24,7 +24,7 @@ const clienteSchema = new mongoose.Schema({
     IncidentesCliente: String,
     IncidentesRecepcionista: String,
     ResultadoTecnico: String,
-    consultado: { type: Boolean, default: false }
+    consultado: { type: Boolean, default: false },
 });
 
 // Usar el plugin de paginación
