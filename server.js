@@ -22,8 +22,8 @@ app.use(cors());
 // Conectar a la base de datos
 connectDB();
 
-// Usar las rutas
-app.use('/clientes', clienteRoutes);
+// Usar las rutas y pasar io como parámetro
+app.use('/clientes', clienteRoutes(io));
 
 // Configurar WebSockets
 io.on('connection', (socket) => {
@@ -41,4 +41,4 @@ server.listen(PORT, () => {
 });
 
 // Exportar io para usarlo en otros archivos
-module.exports = { io, server };
+module.exports = { server, io };

@@ -1,5 +1,5 @@
 const Cliente = require("../models/cliente");
-const { io } = require("../server"); // Importar io desde server.js
+const { server, io } = require("../server"); // Importar io desde server.js
 
 // Obtener todos los clientes
 const getClientes = async (req, res) => {
@@ -83,24 +83,13 @@ const getClienteById = async (req, res) => {
 };
 
 // Actualizacion de clientes consultados
-const updateConsultadoStatus = async (req, res) => {
+const updateConsultadoStatus = async (req, res, io) => {
   try {
       const { numeroOrden } = req.params;
       const { consultado } = req.body;
 
       console.log('Datos recibidos:', { numeroOrden, consultado }); // Depuración
 
-      // Verificar si el número de orden es válido
-      if (!numeroOrden || isNaN(numeroOrden)) {
-          return res.status(400).json({ message: "Número de orden inválido" });
-      }
-
-      // Verificar si el valor de "consultado" es un booleano
-      if (typeof consultado !== 'boolean') {
-          return res.status(400).json({ message: "El valor de 'consultado' debe ser un booleano" });
-      }
-
-      // Buscar y actualizar el cliente
       const cliente = await Cliente.findOneAndUpdate(
           { NumeroOrden: numeroOrden },
           { consultado },
@@ -108,7 +97,6 @@ const updateConsultadoStatus = async (req, res) => {
       );
 
       if (!cliente) {
-          console.log('Cliente no encontrado:', numeroOrden); // Depuración
           return res.status(404).json({ message: "Cliente no encontrado" });
       }
 
@@ -120,7 +108,7 @@ const updateConsultadoStatus = async (req, res) => {
       res.json(cliente);
   } catch (error) {
       console.error('Error al actualizar el estado de consultado:', error);
-      res.status(500).json({ message: `Hubo un error al actualizar el estado de consultado: ${error.message}` });
+      res.status(500).json({ message: "Hubo un error al actualizar el estado de consultado." });
   }
 };
 

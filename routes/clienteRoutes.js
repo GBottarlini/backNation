@@ -3,13 +3,15 @@ const { getClientes, getClienteById, updateConsultadoStatus } = require('../cont
 
 const router = express.Router();
 
-// Ruta para obtener todos los clientes
-router.get('/', getClientes);
+module.exports = (io) => {
+    // Ruta para obtener todos los clientes
+    router.get('/', getClientes);
 
-// Ruta para obtener un cliente por su número de orden
-router.get('/:numeroOrden', getClienteById);
+    // Ruta para obtener un cliente por su número de orden
+    router.get('/:numeroOrden', getClienteById);
 
-// Ruta para mostrar clientes consultados
-router.put('/:numeroOrden/consultado', updateConsultadoStatus);
+    // Ruta para mostrar clientes consultados
+    router.put('/:numeroOrden/consultado', (req, res) => updateConsultadoStatus(req, res, io));
 
-module.exports = router;
+    return router;
+};
