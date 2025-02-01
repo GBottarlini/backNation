@@ -83,32 +83,30 @@ const getClienteById = async (req, res) => {
 };
 
 // Actualizacion de clientes consultados
-
 const updateConsultadoStatus = async (req, res) => {
   try {
-    const { numeroOrden } = req.params;
-    const { consultado } = req.body;
+      const { numeroOrden } = req.params;
+      const { consultado } = req.body;
 
-    const cliente = await Cliente.findOneAndUpdate(
-      { NumeroOrden: numeroOrden },
-      { consultado },
-      { new: true }
-    );
+      // Buscar y actualizar por NumeroOrden (debe ser único)
+      const cliente = await Cliente.findOneAndUpdate(
+          { NumeroOrden: numeroOrden },  // <-- Usar NumeroOrden para la búsqueda
+          { consultado: consultado },      // <-- Asignar el valor directamente
+          { new: true }
+      );
 
-    if (!cliente) {
-      return res.status(404).json({ message: "Cliente no encontrado" });
-    }
+      if (!cliente) {
+          return res.status(404).json({ message: "Cliente no encontrado" });
+      }
 
-    // Emitir un evento a todos los clientes
-    io.emit("cliente_actualizado", cliente);
+      // Emitir el evento con el cliente actualizado (incluir NumeroOrden)
+      io.emit("cliente_actualizado", cliente); // <-- Enviar el objeto cliente completo
 
-    res.json(cliente);
+      res.json(cliente);
   } catch (error) {
-    console.error("Error al actualizar el estado de consultado:", error);
-    res
-      .status(500)
-      .json({
-        message: "Hubo un error al actualizar el estado de consultado.",
+      console.error("Error al actualizar el estado de consultado:", error);
+      res.status(500).json({
+          message: "Hubo un error al actualizar el estado de consultado.",
       });
   }
 };

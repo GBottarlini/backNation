@@ -10,6 +10,6 @@ router.get('/', getClientes);
 router.get('/:numeroOrden', getClienteById);
 
 // Ruta para mostrar clientes consultados
-router.put('/:numeroOrden/Consultado', updateConsultadoStatus);
+router.put('/:numeroOrden/consultado', updateConsultadoStatus);
 
 module.exports = router;
