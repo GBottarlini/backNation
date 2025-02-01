@@ -88,26 +88,28 @@ const updateConsultadoStatus = async (req, res) => {
       const { numeroOrden } = req.params;
       const { consultado } = req.body;
 
-      // Buscar y actualizar por NumeroOrden (debe ser único)
+      console.log('Datos recibidos:', { numeroOrden, consultado }); // Depuración
+
       const cliente = await Cliente.findOneAndUpdate(
-          { NumeroOrden: numeroOrden },  // <-- Usar NumeroOrden para la búsqueda
-          { consultado: consultado },      // <-- Asignar el valor directamente
+          { NumeroOrden: numeroOrden },
+          { consultado },
           { new: true }
       );
 
       if (!cliente) {
+          console.log('Cliente no encontrado:', numeroOrden); // Depuración
           return res.status(404).json({ message: "Cliente no encontrado" });
       }
 
-      // Emitir el evento con el cliente actualizado (incluir NumeroOrden)
-      io.emit("cliente_actualizado", cliente); // <-- Enviar el objeto cliente completo
+      console.log('Cliente actualizado:', cliente); // Depuración
+
+      // Emitir un evento a todos los clientes
+      io.emit('cliente_actualizado', cliente);
 
       res.json(cliente);
   } catch (error) {
-      console.error("Error al actualizar el estado de consultado:", error);
-      res.status(500).json({
-          message: "Hubo un error al actualizar el estado de consultado.",
-      });
+      console.error('Error al actualizar el estado de consultado:', error);
+      res.status(500).json({ message: "Hubo un error al actualizar el estado de consultado." });
   }
 };
 
