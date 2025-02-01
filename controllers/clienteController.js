@@ -1,5 +1,5 @@
 const Cliente = require("../models/cliente");
-const io = require("../server"); // Importar io desde server.js
+const { io } = require("../server"); // Importar io desde server.js
 
 // Obtener todos los clientes
 const getClientes = async (req, res) => {

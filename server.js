@@ -1,5 +1,6 @@
 const express = require('express');
 const http = require('http');
+const { Server } = require('socket.io');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
@@ -35,9 +36,9 @@ io.on('connection', (socket) => {
 
 // Iniciar el servidor
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
 
 // Exportar io para usarlo en otros archivos
-module.exports = io;
+module.exports = { io, server };
