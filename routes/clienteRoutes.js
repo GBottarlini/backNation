@@ -19,9 +19,14 @@ module.exports = (io) => {
   router.put("/:numeroOrden/consultado", (req, res) =>
     updateConsultadoStatus(req, res, io)
   );
-  // Nueva ruta para anotaciones
+  // Nueva ruta para  agregar anotaciones
   router.post("/:numeroOrden/anotaciones", (req, res) =>
     addAnotacion(req, res, io)
+  );
+
+  // Ruta para eliminar anotaciones
+  router.delete("/:numeroOrden/anotaciones/:anotacionId", (req, res) =>
+    deleteAnotacion(req, res, io)
   );
 
   return router;

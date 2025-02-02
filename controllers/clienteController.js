@@ -117,7 +117,7 @@ const updateConsultadoStatus = async (req, res, io) => {
   }
 };
 
-// Función para agregar anotaciones (nueva)
+// Función para agregar anotaciones 
 const addAnotacion = async (req, res, io) => {
   try {
       const { numeroOrden } = req.params;
@@ -135,6 +135,25 @@ const addAnotacion = async (req, res, io) => {
       res.status(500).json({ message: "Error al agregar anotación" });
   }
 };
+
+// Funcion para eliminar anotaciones 
+const deleteAnotacion = async (req, res, io) => {
+  try {
+      const { numeroOrden, anotacionId } = req.params;
+      
+      const cliente = await Cliente.findOneAndUpdate(
+          { NumeroOrden: numeroOrden },
+          { $pull: { anotaciones: { _id: anotacionId } } },
+          { new: true }
+      );
+
+      io.emit('cliente_actualizado', cliente);
+      res.json(cliente);
+  } catch (error) {
+      res.status(500).json({ message: "Error al eliminar anotación" });
+  }
+};
+
 
 // Exportar las funciones
 module.exports = {
