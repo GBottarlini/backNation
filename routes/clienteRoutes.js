@@ -4,6 +4,7 @@ const {
   getClienteById,
   updateConsultadoStatus,
   addAnotacion,
+  deleteAnotacion,
 } = require("../controllers/clienteController");
 
 const router = express.Router();
