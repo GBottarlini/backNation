@@ -17,6 +17,7 @@ const getClientes = async (req, res) => {
       marca,
       ordenar,
       sortBy,
+      consultado
     } = req.query;
     const options = {
       page: parseInt(page),
@@ -58,6 +59,11 @@ const getClientes = async (req, res) => {
     if (marca) {
       filter.Marca = { $regex: marca, $options: "i" };
     }
+    if (consultado !== undefined) {
+      filter.consultado = consultado === 'true';
+    }
+  
+
 
     const result = await Cliente.paginate(filter, options);
     res.json(result);
@@ -111,10 +117,30 @@ const updateConsultadoStatus = async (req, res, io) => {
   }
 };
 
+// Función para agregar anotaciones (nueva)
+const addAnotacion = async (req, res, io) => {
+  try {
+      const { numeroOrden } = req.params;
+      const { texto } = req.body;
+
+      const cliente = await Cliente.findOneAndUpdate(
+          { NumeroOrden: numeroOrden },
+          { $push: { anotaciones: { texto } } },
+          { new: true }
+      );
+
+      io.emit('cliente_actualizado', cliente); // Notificar a todos
+      res.json(cliente);
+  } catch (error) {
+      res.status(500).json({ message: "Error al agregar anotación" });
+  }
+};
+
 // Exportar las funciones
 module.exports = {
   getClientes,
   getClienteById,
   updateConsultadoStatus,
+  addAnotacion,
 };
 

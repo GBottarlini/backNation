@@ -25,11 +25,15 @@ const clienteSchema = new mongoose.Schema({
     IncidentesRecepcionista: String,
     ResultadoTecnico: String,
     consultado: { type: Boolean, default: false },
+    anotaciones: [
+        {
+            fecha: { type: Date, default: Date.now },
+            texto: String
+        }
+    ]
 });
 
 // Usar el plugin de paginación
 clienteSchema.plugin(mongoosePaginate);
-
 const Cliente = mongoose.model('Cliente', clienteSchema, 'Clientes');
-
 module.exports = Cliente;
