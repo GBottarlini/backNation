@@ -161,5 +161,6 @@ module.exports = {
   getClienteById,
   updateConsultadoStatus,
   addAnotacion,
+  deleteAnotacion,
 };
 
