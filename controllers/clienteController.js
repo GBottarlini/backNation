@@ -20,8 +20,8 @@ const getClientes = async (req, res) => {
       consultado,
     } = req.query;
     const options = {
-      page: (page),
-      limit: (limit),
+      page: page,
+      limit: limit,
       sort: {},
     };
 
@@ -62,18 +62,12 @@ const getClientes = async (req, res) => {
     if (consultado !== undefined) {
       filter.consultado = consultado === "true";
     }
-
-    console.log("Filtros aplicados:", filter);
-    console.log("Opciones de paginación:", options);
-
     const result = await Cliente.paginate(filter, options);
     res.json(result);
   } catch (error) {
     console.error("Error al obtener clientes:", error);
     res.status(500).json({ message: "Hubo un error al obtener los clientes." });
   }
-
-  
 };
 
 const getClienteById = async (req, res) => {
@@ -108,58 +102,54 @@ const updateConsultadoStatus = async (req, res, io) => {
       return res.status(404).json({ message: "Cliente no encontrado" });
     }
 
-    console.log("Cliente actualizado:", cliente); // Depuración
-
     // Emitir un evento a todos los clientes
     io.emit("cliente_actualizado", cliente);
 
     res.json(cliente);
   } catch (error) {
     console.error("Error al actualizar el estado de consultado:", error);
-    res
-      .status(500)
-      .json({
-        message: "Hubo un error al actualizar el estado de consultado.",
-      });
+    res.status(500).json({
+      message: "Hubo un error al actualizar el estado de consultado.",
+    });
   }
 };
 
 // Función para agregar anotaciones
-// const addAnotacion = async (req, res, io) => {
-//   try {
-//     const { numeroOrden } = req.params;
-//     const { texto } = req.body;
+const addAnotacion = async (req, res, io) => {
+  try {
+    const { numeroOrden } = req.params;
+    const { texto } = req.body;
 
-//     const cliente = await Cliente.findOneAndUpdate(
-//       { NumeroOrden: numeroOrden },
-//       { $push: { anotaciones: { texto } } },
-//       { new: true }
-//     );
+    const cliente = await Cliente.findOneAndUpdate(
+      { NumeroOrden: numeroOrden },
+      { $push: { anotaciones: { texto } } },
+      { new: true }
+    );
 
-//     io.emit("cliente_actualizado", cliente); // Notificar a todos
-//     res.json(cliente);
-//   } catch (error) {
-//     res.status(500).json({ message: "Error al agregar anotación" });
-//   }
-// };
+    io.emit("cliente_actualizado", cliente); // Notificar a todos
+    res.json(cliente);
+  } catch (error) {
+    res.status(500).json({ message: "Error al agregar anotación" });
+  }
+};
 
 // // Funcion para eliminar anotaciones
-// const deleteAnotacion = async (req, res, io) => {
-//   try {
-//     const { numeroOrden, anotacionId } = req.params;
+const deleteAnotacion = async (req, res, io) => {
+  try {
+    const { numeroOrden, anotacionId } = req.params;
 
-//     const cliente = await Cliente.findOneAndUpdate(
-//       { NumeroOrden: numeroOrden },
-//       { $pull: { anotaciones: { _id: anotacionId } } },
-//       { new: true }
-//     );
+    const cliente = await Cliente.findOneAndUpdate(
+      { NumeroOrden: numeroOrden },
+      { $pull: { anotaciones: { _id: anotacionId } } },
+      { new: true }
+    );
 
-//     io.emit("cliente_actualizado", cliente);
-//     res.json(cliente);
-//   } catch (error) {
-//     res.status(500).json({ message: "Error al eliminar anotación" });
-//   }
-// };
+    io.emit("cliente_actualizado", cliente);
+    res.json(cliente);
+  } catch (error) {
+    res.status(500).json({ message: "Error al eliminar anotación" });
+  }
+};
 
 // Exportar las funciones
 module.exports = {
